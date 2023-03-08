@@ -1,68 +1,155 @@
-//Alert bienvenida
-alert("Bienvenido al simulador de presupuesto de viaje por el sudeste asiatico!")
-
 //class
-class Viaje{
-    constructor (pais, cantidadDias, costoDiario){
-        this.pais=pais;
-        this.cantidadDias=cantidadDias;
-        this.costoDiario=costoDiario;
-    }
-}
 
 class CostoPais{
-    constructor(pais, costoDiario){
+    constructor(id, pais, costoDiario, img){
+        this.id=id;
         this.pais=pais;
         this.costoDiario=costoDiario;
+        this.img=img;
+        this.cantidad=1;
     }
 }
 
-const indonesia= new CostoPais("indonesia",25);
-const filipinas = new CostoPais("filipinas",25);
-const malasia = new CostoPais("malasia",30);
-const singapur = new CostoPais("singapur",50);
-const tailandia = new CostoPais("tailandia",20);
-const vietnam = new CostoPais("vietnam",30);
-const brunei = new CostoPais("brunei",40);
-const camboya = new CostoPais("camboya",30);
-const laos = new CostoPais("laos",20);
-const myanmar = new CostoPais("myanmar",30);
+const indonesia= new CostoPais(1,"INDONESIA",35,"img/indonesia.png");
+const filipinas = new CostoPais(2,"FILIPINAS",35,"img/filipinas.png");
+const malasia = new CostoPais(3,"MALASIA",40,"img/malasia.png");
+const singapur = new CostoPais(4,"SINGAPUR",80,"img/singapur.png");
+const tailandia = new CostoPais(5,"TAILANDIA",30,"img/tailandia.png");
+const vietnam = new CostoPais(6,"VIETNAM",40,"img/vietnam.png");
+const brunei = new CostoPais(7,"BRUNEI",60,"img/brunei.png");
+const camboya = new CostoPais(8,"CAMBOYA",40,"img/camboya.png");
+const laos = new CostoPais(9,"LAOS",30,"img/laos.png");
+const myanmar = new CostoPais(10,"MYANMAR",50,"img/myanmar.png");
 
 //Arrays
-const viajeElegido=[];
+let viajeElegido=[];
 const costoPais=[indonesia,filipinas,malasia,singapur,tailandia,vietnam,brunei,camboya,laos,myanmar];
+console.log(costoPais);
 
-let otroPais="si"
+//**CARGAR PRESUPUESTO DESDE LOCAL STORAGE **/
+if(localStorage.getItem("presupuesto")){
+    viajeElegido=JSON.parse(localStorage.getItem("presupuesto"));
+}
 
-do{
-    let pais = prompt("Los países que conforman el sudeste asiático son: Indonesia, Filipinas, Malasia, Singapur, Tailandia, Vietnam, Brunei, Camboya, Laos y Myanmar. ¿Que país desea visitar?")
-    if(pais.toLowerCase() != "indonesia" && pais.toLowerCase() != "filipinas" && pais.toLowerCase() != "malasia" && pais.toLowerCase() != "singapur" && pais.toLowerCase() != "tailandia" && pais.toLowerCase() != "vietnam" && pais.toLowerCase() != "brunei" && pais.toLowerCase() != "camboya" && pais.toLowerCase() != "laos" && pais.toLowerCase() != "myanmar"){
-        alert("Por favor, ingrese un pais correspondiente a la lista mostrada anteriormente.")
+//Modificacion DOM
+const contenedorPaises= document.getElementById("contenedorPaises");
+
+//Funcion para mostrar paises
+const mostrarPaises =()=>{
+    costoPais.forEach(pais=> {
+        const card = document.createElement("div");
+        card.classList.add("col-xl-3","col-md-6","col-sm-12");
+        card.innerHTML= `
+            <div class="card">
+                <img src="${pais.img}" class="card-img-tom imgPais">
+                <div class="card-body">
+                    <h2 class="text-center"> ${pais.pais}</h2>
+                    <p class="text-center"> Costo diario: ${pais.costoDiario} USD</p>
+                    <label for="dias${pais.id}" class="text-center m-1">Cantidad de dias:</label><br>
+                    <input id="dias${pais.id}" class="text-center m-1" type="number" placeholder="0">
+                    <button class="btn btn-outline-primary m-1" id="boton${pais.id}">Agregar al presupuesto</button>
+                </div>
+            </div>`
+        contenedorPaises.appendChild(card);
+        
+        //Agregar paises al presupuesto
+        const boton=document.getElementById(`boton${pais.id}`);
+        boton.addEventListener("click",()=>{
+            const cantidad=document.getElementById(`dias${pais.id}`).value;
+            pais.cantidad=cantidad;
+            agregarAlPresupuesto(pais.id);
+        })
+        
+    })
+}
+mostrarPaises();
+console.log(viajeElegido)
+//funcion agregar al presupuesto
+const agregarAlPresupuesto=(id)=>{
+    const paisEnPresupuesto=viajeElegido.find(pais=>pais.id===id);
+    if(paisEnPresupuesto){
+        paisEnPresupuesto.cantidad;
+        console.log(paisEnPresupuesto.cantidad);
+    }else{
+        const pais=costoPais.find(pais=>pais.id===id);
+        viajeElegido.push(pais);
     }
-    else{
-        let dias = parseInt(prompt("¿Cuántos días desea viajar por "+pais+"?"))
-        if(!isNaN(dias) && dias>0){
-            const costo = costoPais.find(costo=>costo.pais==pais.toLowerCase());
-            console.log(costo);
-            let paisElegido=new Viaje (pais,dias,costo.costoDiario);
-            viajeElegido.push(paisElegido);
-            console.log(viajeElegido);
-        }
-        else{
-            alert("Por favor, ingrese un valor numérico mayor a 0")
-        }
-    }
-    otroPais=prompt("¿Desea agregar otro pais a su viaje? Conteste 'SI' o 'NO'")
-}while (otroPais.toLowerCase() == "si")
+    console.log(viajeElegido);
+    //localStorage:
+    localStorage.setItem("presupuesto",JSON.stringify(viajeElegido));
+}
 
-let presupuestoTotal=viajeElegido.reduce((acumulador,pais)=>acumulador+(pais.cantidadDias*pais.costoDiario),0)
-console.log(presupuestoTotal);
+//Mostrar la lista de paises:
+const contenedorPresupuesto=document.getElementById("contenedorPresupuesto");
+const verPresupuesto=document.getElementById("verPresupuesto");
 
-let totalDias=viajeElegido.reduce((acumulador,dias)=>acumulador+(dias.cantidadDias),0)
+verPresupuesto.addEventListener("click",()=>{
+    mostrarPresupuesto();
+})
 
-alert("El presupuesto aproximado para su viaje de "+totalDias+" dias por el sudeste asiático sería de: "+presupuestoTotal+" USD. Recuerde que este presupuesto no incluye precio de aéreos y traslados.");
+const mostrarPresupuesto=()=>{
+    contenedorPresupuesto.innerHTML="";
+    viajeElegido.forEach(pais=>{
+        const card = document.createElement("div");
+        
+        card.innerHTML= `
+                <div class="paisesConDias justify-content-between">
+                    <p><img src="${pais.img}" class="imgPaisElegido"> ${pais.pais} por ${pais.cantidad} dias</p>
+                    <button class="btn btn-outline-primary" id="eliminar${pais.id}">Eliminar</button>
+                </div>`
 
+        contenedorPresupuesto.appendChild(card);
 
+        //Eliminar paises del presupuesto:
+
+        const boton=document.getElementById(`eliminar${pais.id}`);
+        boton.addEventListener("click",()=>{
+            eliminarDelPresupuesto(pais.id);
+        })
+    })
+}
+
+//Funcion que elimina el pais del presupuesto:
+const eliminarDelPresupuesto=(id)=>{
+    const pais=viajeElegido.find(pais=>pais.id===id);
+    const indice=viajeElegido.indexOf(pais);
+    viajeElegido.splice(indice,1);
+    mostrarPresupuesto();
+
+    //LocalStorage:
+    localStorage.setItem("presupuesto",JSON.stringify(viajeElegido));
+
+}
+
+//Vaciamos el presupuesto:
+const vaciarPresupuesto=document.getElementById("vaciarPresupuesto");
+
+vaciarPresupuesto.addEventListener("click",()=>{
+    eliminarTodoPresupuesto();
+})
+
+const eliminarTodoPresupuesto=()=>{
+    viajeElegido=[];
+    mostrarPresupuesto();
+
+    //localStorage:
+    localStorage.clear();   
+}
+
+//Mensaje con el total del presupuesto:
+
+const total=document.getElementById("total");
+const totalPres=document.getElementById("totalPresupuesto");
+totalPres.addEventListener("click",()=>{
+    calcularTotal();
+})
+const calcularTotal=()=>{
+    let totalPresupuesto=0;
+    viajeElegido.forEach(pais=>{
+        totalPresupuesto+=pais.costoDiario*pais.cantidad;
+    })
+    total.innerHTML=`USD ${totalPresupuesto}`;
+}
 
 
 

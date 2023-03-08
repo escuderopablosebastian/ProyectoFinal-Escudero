@@ -1,0 +1,26 @@
+.imgPais {
+    width: 150px;
+    object-fit: contain;
+    margin-top: 1rem;
+}
+
+.card {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem;
+}
+
+.imgPaisElegido{
+    width: 30px;
+}
+
+.paisElegido{
+    display: flex;
+    flex-direction: row;
+    margin: 1rem;
+}
+
+.paisesConDias{
+    display: flex;
+    margin-top: 1rem;
+}
