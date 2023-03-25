@@ -1,3 +1,15 @@
+body {
+    font-family: 'Poppins', sans-serif;
+  background-color: whitesmoke;
+  color: #7395AE;  
+}
+
+.cambioMonedas{
+    font-size: 1rem;
+}
+.container h1{
+    margin-top: 1rem;
+}
 .imgPais {
     width: 150px;
     object-fit: contain;
@@ -8,6 +20,7 @@
     display: flex;
     align-items: center;
     margin: 0.5rem;
+    background-color: rgb(242, 245, 249);
 }
 
 .imgPaisElegido{
